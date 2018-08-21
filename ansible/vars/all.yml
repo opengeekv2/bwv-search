@@ -1,0 +1,10 @@
+elasticsearch:
+  version: 6.3.2
+  host: localhost
+  port: 9200
+  settings:
+    - { setting: network.host, value: 0.0.0.0 }
+    - { setting: http.port, value: 9200 }
+  jvm:
+    - { setting: -Xms, value: 512m }
+    - { setting: -Xmx, value: 512m }

@@ -1,0 +1,9 @@
+<h1>BWV Search</h1>
+<h2>{{ hits|length }} results for '{{ chords }}'</h2>
+{% for score in hits %}
+    <h3>{{ score.name }}</h3>
+    <ul>
+        <li>Key: {{ score.key }}</li>
+        <li>Score: {{ score.score }}</li>
+    </ul>
+{% endfor %}

@@ -1,0 +1,9 @@
+<h1>BWV Search</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'bwvsearchweb:search' %}" method="post">
+{% csrf_token %}
+<input type="text" name="chords" id="chords">
+<input type="submit" value="Search">
+</form>

@@ -1,4 +1,6 @@
 music21
+pillow
+pygame
 elasticsearch>=6.0.0,<7.0.0
 elasticsearch-dsl>=6.0,<7.0
 Django

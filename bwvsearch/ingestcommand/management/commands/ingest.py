@@ -24,9 +24,15 @@ class Command(BaseCommand):
             },
             "mappings": {
                 "score-chords": {
-                    "dynamic": "strict",
+                    "dynamic": "dynamic",
                     "properties": {
                         "name": {
+                            "type": "text"
+                        },
+                        "date": {
+                            "type": "date"
+                        },
+                        "filePath": {
                             "type": "text"
                         },
                         "key": {
@@ -58,6 +64,8 @@ class Command(BaseCommand):
             chords = chords + ' ' + chord.pitchedCommonName
         return {
             'name': chorale.metadata.title,
+            'date': chorale.metadata.date,
+            'filePath': chorale.corpusFilepath,
             'key': chorale.analyze('key').tonicPitchNameWithCase,
             'chords': chords
         }

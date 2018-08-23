@@ -1,9 +1,10 @@
-from django.db import models
-from elasticsearch import Elasticsearch
-from music21 import *
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.db import models
+from elasticsearch import Elasticsearch
+from music21 import *
+import os
 
 class ScoreManager(models.Manager):
     _es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
@@ -27,7 +28,6 @@ class ScoreManager(models.Manager):
             score.file_path = hit['_source']['filePath']
             score.key = hit['_source']['key']
             score.score = hit['_score']
-            score.image = default_storage.save('/' + score.file_path + '.png', ContentFile(corpus.parse(score.file_path).write('lily.png')))
             hits.append(score)
         return hits
 
@@ -39,8 +39,18 @@ class Score(models.Model):
     file_path = models.CharField(max_length=200)
     key = models.CharField(max_length=200)
     score = models.FloatField()
-    image = models.ImageField(upload_to=settings.MEDIA_ROOT + 'scores')
     objects = ScoreManager()
+
+    @property
+    def image(self):
+        filename = ''
+        if (not default_storage.exists(self.file_path.replace('/', '_') + '.png')):
+            environment.set('directoryScratch', settings.MEDIA_ROOT)
+            environment.set('musescoreDirectPNGPath', '/vagrant/sh/mscore.sh')
+            environment.set('musicxmlPath', '/vagrant/sh/mscore.sh')
+            path = corpus.parse(self.file_path).write('musicxml.png')
+            os.rename(path, settings.MEDIA_ROOT + self.file_path.replace('/', '_') + '.png')
+        return default_storage.url(self.file_path.replace('/', '_') + '.png')
 
     class Meta:
         managed = False

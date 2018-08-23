@@ -1,4 +1,11 @@
-<h1>BWV Search</h1>
+<head>
+<style>
+.score {
+    width: 200px;
+}
+</style>
+</head>
+<h1>Search</h1>
 <h2>{{ hits|length }} results for '{{ chords }}'</h2>
 {% for score in hits %}
     <h3>{{ score.name }}</h3>
@@ -6,5 +13,5 @@
         <li>Key: {{ score.key }}</li>
         <li>Score: {{ score.score }}</li>
     </ul>
-    <img src="{{ score.image.url }}"></img>
+    <img class="score" src="{{ score.image }}"></img>
 {% endfor %}

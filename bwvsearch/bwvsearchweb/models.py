@@ -7,7 +7,7 @@ from music21 import *
 import os
 
 class ScoreManager(models.Manager):
-    _es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+    _es = Elasticsearch([{'host': 'elasticsearch', 'port': 9200}])
     
     def with_pitched_chords(self, chords):
         res = self._es.search(
@@ -24,7 +24,6 @@ class ScoreManager(models.Manager):
         for hit in res['hits']['hits']:
             score = Score()
             score.name = hit['_source']['name']
-            score.date = hit['_source']['date']
             score.file_path = hit['_source']['filePath']
             score.key = hit['_source']['key']
             score.score = hit['_score']
@@ -46,8 +45,8 @@ class Score(models.Model):
         filename = ''
         if (not default_storage.exists(self.file_path.replace('/', '_') + '.png')):
             environment.set('directoryScratch', settings.MEDIA_ROOT)
-            environment.set('musescoreDirectPNGPath', '/vagrant/sh/mscore.sh')
-            environment.set('musicxmlPath', '/vagrant/sh/mscore.sh')
+            environment.set('musescoreDirectPNGPath', settings.BASE_DIR + '/sh/mscore.sh')
+            environment.set('musicxmlPath', settings.BASE_DIR + '/sh/mscore.sh')
             path = corpus.parse(self.file_path).write('musicxml.png')
             os.rename(path, settings.MEDIA_ROOT + self.file_path.replace('/', '_') + '.png')
         return default_storage.url(self.file_path.replace('/', '_') + '.png')

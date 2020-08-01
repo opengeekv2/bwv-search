@@ -1,0 +1,54 @@
+version: '3'  
+services:
+    bwv-ingest:
+      build: .
+      command: >
+        /bin/bash -c "
+          while ! curl -X GET elasticsearch:9200/_cluster/health
+          do
+            sleep 1;
+          done;
+          python manage.py ingest
+        "
+      volumes:
+        - ./bwvsearch:/code
+      depends_on:
+        - elasticsearch
+      networks:
+        - default
+    bwv-search:
+      build: .
+      command: >
+        /bin/bash -c "
+          while ! curl -X GET elasticsearch:9200/_cluster/health
+          do
+            sleep 1;
+          done;
+          python manage.py runserver 0.0.0.0:8000
+        "
+      volumes:
+        - ./bwvsearch:/code
+      ports:
+        - "8000:8000"
+      depends_on:
+        - bwv-ingest
+        - elasticsearch
+      networks:
+        - default
+    elasticsearch:
+      image: blacktop/elasticsearch:5.6
+      container_name: elasticsearch
+      hostname: elasticsearch
+      environment:
+        - discovery.type=single-node
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+      networks:
+        - default
+networks:
+  default:

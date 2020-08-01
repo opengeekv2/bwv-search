@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def connect_elasticsearch(self):
         _es = None
-        _es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+        _es = Elasticsearch([{'host': 'elasticsearch', 'port': 9200}])
         if _es.ping():
             print('Yay Connect')
         else:
@@ -28,9 +28,6 @@ class Command(BaseCommand):
                     "properties": {
                         "name": {
                             "type": "text"
-                        },
-                        "date": {
-                            "type": "date"
                         },
                         "filePath": {
                             "type": "text"
@@ -64,7 +61,6 @@ class Command(BaseCommand):
             chords = chords + ' ' + chord.pitchedCommonName
         return {
             'name': chorale.metadata.title,
-            'date': chorale.metadata.date,
             'filePath': chorale.corpusFilepath,
             'key': chorale.analyze('key').tonicPitchNameWithCase,
             'chords': chords

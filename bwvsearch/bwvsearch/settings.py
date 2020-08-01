@@ -125,3 +125,5 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = '/vagrant/bwvsearch/media/'
 
 MEDIA_URL = '/media/'
+
+ALLOWED_HOSTS = ['*']

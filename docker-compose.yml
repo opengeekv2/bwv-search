@@ -35,6 +35,10 @@ services:
         - elasticsearch
       networks:
         - default
+      environment:
+        - directoryScratch=/code/media
+        - musescoreDirectPNGPath=/code/sh/mscore.sh
+        - musicxmlPath=/code/sh/mscore.sh
     elasticsearch:
       image: blacktop/elasticsearch:5.6
       container_name: elasticsearch

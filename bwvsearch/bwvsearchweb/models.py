@@ -4,8 +4,9 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from django.db import models
 from elasticsearch import Elasticsearch
-from music21 import *
+from music21 import corpus
 import os
+import glob
 
 class ScoreManager(models.Manager):
     _es = Elasticsearch([{'host': 'elasticsearch', 'port': 9200}])
@@ -41,17 +42,21 @@ class Score(models.Model):
     score = models.FloatField()
     objects = ScoreManager()
 
+    def __generate_score(self):
+        path = corpus.parse(self.file_path).write('musicxml.png')
+        os.rename(path, settings.MEDIA_ROOT + self.file_path.replace('/', '_') + '.png')
+        self.__cleanup()
+
+    def __cleanup(self):
+        for fl in glob.glob(settings.MEDIA_ROOT + 'tmp*'):
+                os.remove(fl)
+        for fl in glob.glob(settings.MEDIA_ROOT + 'm21*'):
+            os.remove(fl)
+
     @property
     def image(self):
-        filename = ''
-        logger = logging.getLogger(__name__)
-        logger.error(self.file_path)
         if (not default_storage.exists(self.file_path.replace('/', '_') + '.png')):
-            environment.set('directoryScratch', settings.MEDIA_ROOT)
-            environment.set('musescoreDirectPNGPath', settings.BASE_DIR + '/sh/mscore.sh')
-            environment.set('musicxmlPath', settings.BASE_DIR + '/sh/mscore.sh')
-            path = corpus.parse(self.file_path).write('musicxml.png')
-            os.rename(path, settings.MEDIA_ROOT + self.file_path.replace('/', '_') + '.png')
+            self.__generate_score()
         return default_storage.url(self.file_path.replace('/', '_') + '.png')
 
     class Meta:

@@ -122,7 +122,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Media files
-MEDIA_ROOT = '/vagrant/bwvsearch/media/'
+MEDIA_ROOT = BASE_DIR + '/media/'
 
 MEDIA_URL = '/media/'
 

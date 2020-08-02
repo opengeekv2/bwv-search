@@ -1,3 +1,4 @@
+import logging
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
@@ -43,6 +44,8 @@ class Score(models.Model):
     @property
     def image(self):
         filename = ''
+        logger = logging.getLogger(__name__)
+        logger.error(self.file_path)
         if (not default_storage.exists(self.file_path.replace('/', '_') + '.png')):
             environment.set('directoryScratch', settings.MEDIA_ROOT)
             environment.set('musescoreDirectPNGPath', settings.BASE_DIR + '/sh/mscore.sh')

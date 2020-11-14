@@ -1,8 +1,8 @@
 up:
-	docker-compose -f -d "docker-compose.yml" up
+	docker-compose -f "docker-compose.yml" up -d
 
 provision:
-	docker-compose -f -d "docker-compose.yml" up --build
+	docker-compose -f "docker-compose.yml" up -d --build
 
 ingest:
 	docker-compose run bwv-ingest
